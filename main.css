@@ -5,45 +5,109 @@
 }
 
 body {
-    background-image:url(background/bgDay.jpg);
-    background-size:cover;
-    background-repeat: no-repeat;
+    background-color:#FAFAFA;
 }
 
 #cityTitle {
-    color:#fff;
+    color:#555;
     width:100%;
-    margin:1.5em 0 0 0;
+    margin:4% 0 0 0;
     font-weight: 300;
-    font-size:4em;
+    font-size:40px;
     text-align: center;
-    text-shadow: 1px 1px #999;
+    float:left;
+    padding:0;
 }
 
 #descriptionTitle {
-    color:#fff;
+    color:#555;
     width:100%;
-    margin:0.4em 0 0 0;
+    margin:1% 0 0 0;
     font-weight: 300;
-    font-size:2em;
+    font-size:20px;
     text-align: center;
-    text-shadow: 1px 1px #999;
+    float:left;
+    padding:0;
 }
 
 #tempTitle {
-    color:#fff;
+    color:#555;
     width:100%;
-    margin:0.00em 0 0 0;
+    margin:0 0 0 0;
     font-weight: 200;
-    font-size:10em;
+    font-size:110px;
     text-align: center;
-    text-shadow: 1px 1px #999;
+    float:left;
+    padding:0;
+}
+
+#dayTitle {
+    color:#555;
+    width:97%;
+    margin:0 0 3% 3%;
+    font-weight: 300;
+    font-size:20px;
+    text-align: left;
+    float:left;
+    padding:0;
 }
 
 .weatherMain {
     background-color:transparent;
+    float:left;
+    width:100%;
+    padding:0;
+    margin:0;
 }
 
-.marketingContent {
-    background-color: transparent;
+.weatherHour {
+    background-color:transparent;
+    border-bottom:1px solid #eee;
+    float:left;
+    width:100%;
+    padding:0;
+    margin:0;
+}
+
+.weatherForecast {
+    background-color:transparent;
+    border-bottom:1px solid #eee;
+    float:left;
+    width:100%;
+    padding:2% 0 2% 0;
+    margin:0;
+}
+
+.container {
+    margin:0;
+    padding:0;
+    width:100%;
+    float:left;
+}
+
+.fcDayContainer {
+    float:left;
+    min-width:94%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size:12% auto;
+    padding:2% 3% 2% 3%;
+}
+
+.fcDayTitle {
+    float:left;
+    width:44%;
+    color:#555;
+    font-weight: 300;
+    font-size:20px;
+    text-align: left;
+}
+
+.fcDayTemp {
+    float:right;
+    width:auto;
+    color:#555;
+    font-weight: 300;
+    font-size:20px;
+    text-align: right;
 }
