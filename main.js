@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         let weather = weatherData();
 
-        console.log(weather.description());
+        console.log(weather.description();
 
         document.getElementById("descriptionTitle").innerHTML = weather.descriptionTranslated();
         document.getElementById("tempTitle").innerHTML = weather.temperature.current()+'°';
