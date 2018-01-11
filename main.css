@@ -8,6 +8,27 @@ body {
     background-color:#FAFAFA;
 }
 
+#weatherHeader {
+    width:100%;
+    position: fixed;
+    padding:0 0 3% 0;
+    z-index:5;
+}
+
+#weatherInfo {
+    float:left;
+    width:100%;
+    padding:0 0 3% 0;
+    opacity:1;
+    background-color:#FAFAFA;
+}
+
+#test {
+    float:left;
+    height:1000px;
+    width:100%;
+}
+
 #cityTitle {
     color:#555;
     width:100%;
@@ -22,7 +43,7 @@ body {
 #descriptionTitle {
     color:#555;
     width:100%;
-    margin:1% 0 0 0;
+    margin:1% 0 1px 0;
     font-weight: 300;
     font-size:20px;
     text-align: center;
@@ -39,12 +60,13 @@ body {
     text-align: center;
     float:left;
     padding:0;
+    z-index:-100;
 }
 
 #dayTitle {
     color:#555;
     width:97%;
-    margin:0 0 3% 3%;
+    margin:0 0 0 3%;
     font-weight: 300;
     font-size:20px;
     text-align: left;
@@ -62,7 +84,6 @@ body {
 
 .weatherHour {
     background-color:transparent;
-    border-bottom:1px solid #eee;
     float:left;
     width:100%;
     padding:0;
@@ -70,12 +91,14 @@ body {
 }
 
 .weatherForecast {
-    background-color:transparent;
+    background-color:#FAFAFA;
     border-bottom:1px solid #eee;
-    float:left;
+    border-top:1px solid #eee;
+    position: absolute;
     width:100%;
     padding:2% 0 2% 0;
-    margin:0;
+    z-index:10;
+    height:auto;
 }
 
 .container {

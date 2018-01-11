@@ -1,6 +1,41 @@
 document.addEventListener('DOMContentLoaded', function (event) {
 
-    let weatherCity = 'Roskilde';
+    let headerHeight= document.getElementById("weatherHeader").offsetHeight;
+    let headerInfoHeight= document.getElementById("weatherInfo").offsetHeight;
+    let test1= document.getElementById("tempTitle").offsetHeight;
+    document.getElementById("weatherInfo").style.marginTop += headerHeight;
+    document.getElementById('weatherForecast').style.marginTop = headerHeight+headerInfoHeight;
+    var fadeStart=0, fadeUntil=headerInfoHeight, fading = $('#weatherInfo');
+    var fadeStart2=0, fadeUntil2=test1, fading2 = $('#tempTitle');
+    $(window).on('scroll', function() {
+        var scrollTop = $(this).scrollTop();
+        var scrollEff = Math.round(scrollTop/headerInfoHeight*100);
+        var weatherInfoHeight = headerInfoHeight - scrollEff;
+        document.getElementById('weatherInfo').style.height = weatherInfoHeight;
+        document.getElementById('weatherForecast').style.marginTop = headerHeight+headerInfoHeight-scrollEff;
+        var offset = $(document).scrollTop(), opacity=0;
+        var offset2 = $(document).scrollTop(), opacity=0;
+        if( offset<=fadeStart ){
+            opacity=1;
+        } else if( offset<=fadeUntil ) {
+            opacity=1-offset/fadeUntil;
+        }
+        if( offset2<=fadeStart2 ){
+            opacity2=1;
+        } else if( offset2<=fadeUntil2 ) {
+            opacity2=1-offset2/fadeUntil2;
+        }
+        fading.css('opacity',opacity);
+        fading2.css('opacity',opacity2);
+
+        if(scrollTop >= headerInfoHeight+test1) {
+            $('#weatherForecast').css({"position":"fixed","top":"0", "margin":headerHeight-test1+"px 0 0 0"});
+        } else if(scrollTop <= headerInfoHeight+test1) {
+            $('#weatherForecast').css({"position":"absolute", "margin":headerHeight+headerInfoHeight+"px 0 0 0"});
+        }
+    });
+
+    let weatherCity = 'Slagelse';
 
     fetch(`http://api.openweathermap.org/data/2.5/weather?q=${weatherCity}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
     .then((response) => {
@@ -8,8 +43,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
     })
     .then((json) => {
         let wDescConTrans = [
-            {id: 500, translation: 'Regn', icon: 'rain.svg'},
-            {id: 520, translation: 'Let regn', icon: 'rain.svg'},
+            {id: 500, translation: 'Let regn', icon: 'rain.svg'},
+            {id: 520, translation: 'Støvregn', icon: 'rain.svg'},
             {id: 701, translation: 'Tåge', icon: 'cloudy.svg'},
             {id: 310, translation: 'Støvregn', icon: 'rain.svg'},
             {id: 601, translation: 'Sne', icon: 'snow.png'},
@@ -93,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         let weather = weatherData();
 
-        console.log(weather.description();
+        console.log(weather.description());
 
         document.getElementById("descriptionTitle").innerHTML = weather.descriptionTranslated();
         document.getElementById("tempTitle").innerHTML = weather.temperature.current()+'°';
