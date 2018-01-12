@@ -1,43 +1,56 @@
 document.addEventListener('DOMContentLoaded', function (event) {
 
-    let headerHeight= document.getElementById("weatherHeader").offsetHeight;
-    let headerInfoHeight= document.getElementById("weatherInfo").offsetHeight;
-    let test1= document.getElementById("tempTitle").offsetHeight;
-    document.getElementById("weatherInfo").style.marginTop += headerHeight;
-    document.getElementById('weatherForecast').style.marginTop = headerHeight+headerInfoHeight;
-    var fadeStart=0, fadeUntil=headerInfoHeight, fading = $('#weatherInfo');
-    var fadeStart2=0, fadeUntil2=test1, fading2 = $('#tempTitle');
+    let weatherLat = 55.6256460;
+    let weatherLon = 12.0860530;
+    let scrollTop = 0;
+    let scrollEff = 0;
+    let weatherInfoHeight = 0;
+    let wInfoOffset;
+    let tempOffset;
+    let weatherHeader = document.getElementById("weatherHeader");
+    let weatherForecast = document.getElementById("weatherForecast");
+    let weatherHeaderBG = document.getElementById("weatherHeaderBG");
+    let weatherHour = document.getElementById("weatherHour");
+    let weatherInfo = document.getElementById("weatherInfo");
+    let tempTitle = document.getElementById("tempTitle");
+    let headerHeight= weatherHeader.offsetHeight;
+    let headerInfoHeight= weatherInfo.offsetHeight;
+    let headerHourHeight= weatherHour.offsetHeight;
+    let headerTempHeight = tempTitle.offsetHeight;
+    let weatherInfoFade = 0, wInfofadeStop = headerInfoHeight, wInfoElement = $('#weatherInfo');
+    let tempTitleFade = 0, tempTitleStop = headerTempHeight, tempTitleElement = $('#tempTitle');
+    weatherInfo.style.marginTop += headerHeight;
+    weatherHour.style.marginTop += headerHeight+headerInfoHeight;
+    weatherForecast.style.marginTop = headerHeight+headerInfoHeight+headerHourHeight;
+    weatherHeaderBG.style.height = headerHeight-headerTempHeight;
     $(window).on('scroll', function() {
-        var scrollTop = $(this).scrollTop();
-        var scrollEff = Math.round(scrollTop/headerInfoHeight*100);
-        var weatherInfoHeight = headerInfoHeight - scrollEff;
-        document.getElementById('weatherInfo').style.height = weatherInfoHeight;
-        document.getElementById('weatherForecast').style.marginTop = headerHeight+headerInfoHeight-scrollEff;
-        var offset = $(document).scrollTop(), opacity=0;
-        var offset2 = $(document).scrollTop(), opacity=0;
-        if( offset<=fadeStart ){
-            opacity=1;
-        } else if( offset<=fadeUntil ) {
-            opacity=1-offset/fadeUntil;
+        scrollTop = $(this).scrollTop();
+        scrollEff = Math.round(scrollTop/headerInfoHeight*100);
+        weatherInfoHeight = headerInfoHeight - scrollEff;
+        weatherInfo.style.height = weatherInfoHeight;
+        weatherHour.style.marginTop = headerHeight+headerInfoHeight-scrollEff;
+        wInfoOffset = $(document).scrollTop(), wInfoOpacity = 0;
+        tempOffset = $(document).scrollTop(), tempOpacity = 0;
+        if(wInfoOffset <= weatherInfoFade){
+            wInfoOpacity = 1;
+        } else if(wInfoOffset <= wInfofadeStop) {
+            wInfoOpacity = 1-wInfoOffset/wInfofadeStop;
         }
-        if( offset2<=fadeStart2 ){
-            opacity2=1;
-        } else if( offset2<=fadeUntil2 ) {
-            opacity2=1-offset2/fadeUntil2;
+        if(tempOffset <= tempTitleFade){
+            tempOpacity = 1;
+        } else if(tempOffset <= tempTitleStop) {
+            tempOpacity = 1-tempOffset/tempTitleStop;
         }
-        fading.css('opacity',opacity);
-        fading2.css('opacity',opacity2);
-
-        if(scrollTop >= headerInfoHeight+test1) {
-            $('#weatherForecast').css({"position":"fixed","top":"0", "margin":headerHeight-test1+"px 0 0 0"});
-        } else if(scrollTop <= headerInfoHeight+test1) {
-            $('#weatherForecast').css({"position":"absolute", "margin":headerHeight+headerInfoHeight+"px 0 0 0"});
+        wInfoElement.css('opacity', wInfoOpacity);
+        tempTitleElement.css('opacity', tempOpacity);
+        if(scrollTop >= headerInfoHeight+headerTempHeight) {
+            $('#weatherHour').css({"position":"fixed","top":"0", "margin":headerHeight-headerTempHeight+"px 0 0 0"});
+        } else if(scrollTop <= headerInfoHeight+headerTempHeight) {
+            $('#weatherHour').css({"position":"absolute", "margin":headerHeight+headerInfoHeight+"px 0 0 0"});
         }
     });
 
-    let weatherCity = 'Slagelse';
-
-    fetch(`http://api.openweathermap.org/data/2.5/weather?q=${weatherCity}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
+    fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${weatherLat}&lon=${weatherLon}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
     .then((response) => {
         return response.json();
     })
@@ -52,7 +65,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
             {id: 804, translation: 'Skyet', icon: 'cloudy.svg'},
             {id: 800, translation: 'Klar himmel', icon: 'sun.svg'},
             {id: 801, translation: 'Let skyet himmel', icon: 'cloudy.svg'},
-            {id: 802, translation: 'Skyet', icon: 'cloudy.svg'}
+            {id: 802, translation: 'Skyet', icon: 'cloudy.svg'},
+            {id: 803, translation: 'Spredte skyer', icon: 'cloudy.svg'}
         ]; 
         let wWindDir = ['N','NV','V','SV','S','SØ','E','NØ'];
         let weekDayName = ['mandag','tirsdag','onsdag','torsdag','fredag','lørdag','søndag'];
@@ -80,9 +94,15 @@ document.addEventListener('DOMContentLoaded', function (event) {
                     let wSunUUnix = new Date(1000*json.sys.sunrise);
                     return dateTimeDigit(wSunUUnix.getHours())+':'+dateTimeDigit(wSunUUnix.getMinutes());
                 },
+                sunriseUnix: function() {
+                    return new Date(1000*json.sys.sunrise);
+                },
                 sunset: function() {
                     let wSunDUnix = new Date(1000*json.sys.sunset);
                     return dateTimeDigit(wSunDUnix.getHours())+':'+dateTimeDigit(wSunDUnix.getMinutes());
+                },
+                sunsetUnix: function() {
+                    return new Date(1000*json.sys.sunset);
                 },
                 description: function() {
                     return json.weather[0].id;
@@ -128,14 +148,14 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         let weather = weatherData();
 
-        console.log(weather.description());
-
         document.getElementById("descriptionTitle").innerHTML = weather.descriptionTranslated();
         document.getElementById("tempTitle").innerHTML = weather.temperature.current()+'°';
         document.getElementById("cityTitle").innerHTML = weather.location();
         document.getElementById("dayTitle").innerHTML = weather.date.weekday()+' i dag';
+        document.getElementById("tempMinTitle").innerHTML = weather.temperature.min();
+        document.getElementById("tempMaxTitle").innerHTML = weather.temperature.max();
 
-        fetch(`http://api.openweathermap.org/data/2.5/forecast?q=${weatherCity}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
+        fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${weatherLat}&lon=${weatherLon}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
         .then((response) => {
             return response.json();
         })
@@ -153,6 +173,57 @@ document.addEventListener('DOMContentLoaded', function (event) {
                         document.getElementById("weatherForecast").innerHTML += `<li class="fcDayContainer" id="fcDayContainer${i}"><p class="fcDayTitle">${fcWeekDay}</p><p class="fcDayTemp">${fcTemp}</p></li>`;
                         document.getElementById("fcDayContainer"+i).style.backgroundImage = `url(icons/${fcIcon})`;
                     }
+                }
+            });
+        })
+
+        fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${weatherLat}&lon=${weatherLon}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
+        .then((response) => {
+            return response.json();
+        })
+        .then((json) => {
+            let todaySUDate = dateTimeDigit(weather.sunriseUnix().getHours());
+            let todaySUMinute = dateTimeDigit(weather.sunriseUnix().getMinutes());
+            let todaySUDT = todaySUDate+todaySUMinute;
+            let todaySDDate = dateTimeDigit(weather.sunsetUnix().getHours());
+            let todaySDMinute = dateTimeDigit(weather.sunsetUnix().getMinutes());
+            let todaySDDT = todaySDDate+todaySDMinute;
+            let sunsetSet = 0;
+            let sunriseSet = 0;
+            let fcConId = 0;
+            let fcDate = 0;
+            let fcTemp = 0;
+            let fcHour = 0;
+            let fcDay = 0;
+            let fcMinute = 0;
+            let fcDT = 0;
+            let fcIcon = '';
+            json.list.forEach(function(element, i) {
+                fcConId = element.weather[0].id;
+                fcDate = new Date(1000*element.dt);
+                fcTemp = Math.round(element.main.temp);
+                fcHour = dateTimeDigit(fcDate.getHours());
+                fcDay = fcDate.getDate();
+                fcMinute = dateTimeDigit(fcDate.getMinutes());
+                fcDT = fcHour+fcMinute;
+                if(weather.date.day() == fcDay) {
+                    fcIcon = weatherConData(fcConId).icon;
+                    console.log(fcIcon);
+                    if(todaySUDT < fcDT && sunriseSet == 0) {
+                        document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItemSU"><h2 class="weatherHourTitle">${weather.sunrise()}</h2><h2 class="weatherHourTime" id="weatherHourTime${i}">Sol op</h2></li>`;
+                        document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItemNow"><h2 class="weatherHourTitle">Nu</h2><h2 class="weatherHourTime" id="weatherHourTime${i}">${weather.temperature.current()}°</h2></li>`;
+                        sunriseSet = 1;
+                    } else if(todaySUDT > fcDT && sunriseSet == 0) {
+                        document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItemNow"><h2 class="weatherHourTitle">Nu</h2><h2 class="weatherHourTime" id="weatherHourTime${i}">${weather.temperature.current()}°</h2></li>`;
+                        document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItemSU"><h2 class="weatherHourTitle">${weather.sunrise()}</h2><h2 class="weatherHourTime" id="weatherHourTime${i}">Sol op</h2></li>`;
+                        sunriseSet = 1;
+                    } else if(todaySDDT < fcDT && sunsetSet == 0) {
+                        document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItemSD"><h2 class="weatherHourTitle">${weather.sunset()}</h2><h2 class="weatherHourTime" id="weatherHourTimeNow${i}">Sol ned</h2></li>`;
+                        sunsetSet = 1;
+                    }
+                    document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItem${i}"><h2 class="weatherHourTitle">${fcHour}</h2><h2 class="weatherHourTime" id="weatherHourTime${i}">${fcTemp}°</h2></li>`;
+                    document.getElementById("weatherHourItem"+i).style.backgroundImage = `url(icons/${fcIcon})`;
+                    document.getElementById("weatherHourItemNow").style.backgroundImage = `url(icons/${weather.icon()})`;
                 }
             });
         })

@@ -2,17 +2,87 @@
     margin:0;
     padding:0;
     font-family: "San Francisco", "Helvetica Neue", "Lucida Grande";
+    -webkit-font-smoothing: subpixel-antialiased;
 }
 
 body {
     background-color:#FAFAFA;
 }
 
+#weatherHourList {
+    height:90px;
+    width:100%;
+    float:left;
+    padding:3% 0 0 0;
+    white-space: nowrap;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    list-style:none;
+}
+
+#weatherHourItemSU {
+    background-image:url('icons/sunrise.svg');
+}
+
+#weatherHourItemSD {
+    background-image:url('icons/sunset.svg');
+}
+
+.weatherHourItem {
+    height:80px;
+    width:5em;
+    margin:0 2% 0 2%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size:1.8em auto;
+    white-space: nowrap;
+    display:inline-block;
+    list-style:none;
+}
+
+.weatherHourItem:first-child {
+    margin:0;
+}
+
+.weatherHourItem:last-child {
+    margin:0;
+}
+
+.weatherHourTime {
+    width:100%;
+    text-align: center;
+    font-weight: 300;
+    font-size:20px;
+    color:#555;
+    line-height: 16px;
+    margin:50px 0 0 0;
+}
+
+.weatherHourTitle {
+    width:100%;
+    text-align: center;
+    font-weight: 300;
+    font-size:20px;
+    color:#555;
+    line-height: 16px;
+}
+
 #weatherHeader {
+    background-color:transparent;
     width:100%;
     position: fixed;
     padding:0 0 3% 0;
-    z-index:5;
+    z-index:3;
+}
+
+#weatherHeaderBG {
+    background-color:#FAFAFA;
+    width:100%;
+    position: fixed;
+    padding:0 0 3% 0;
+    z-index:2;
+    height:200px;
 }
 
 #weatherInfo {
@@ -65,12 +135,34 @@ body {
 
 #dayTitle {
     color:#555;
-    width:97%;
+    width:50%;
     margin:0 0 0 3%;
     font-weight: 300;
     font-size:20px;
     text-align: left;
     float:left;
+    padding:0;
+}
+
+#tempMaxTitle {
+    color:#555;
+    width:auto;
+    margin:0 10% 0 0;
+    font-weight: 300;
+    font-size:20px;
+    text-align: left;
+    float:right;
+    padding:0;
+}
+
+#tempMinTitle {
+    color:#999;
+    width:auto;
+    margin:0 3% 0 0;
+    font-weight: 300;
+    font-size:20px;
+    text-align: left;
+    float:right;
     padding:0;
 }
 
@@ -82,22 +174,29 @@ body {
     margin:0;
 }
 
-.weatherHour {
-    background-color:transparent;
-    float:left;
+#weatherHour {
+    background-color:#FAFAFA;
+    position: absolute;
     width:100%;
     padding:0;
     margin:0;
+    height:110px;
+    min-height:100px;
+    border-top:1px solid #eee;
+    border-bottom:1px solid #eee;
+    z-index:4;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 .weatherForecast {
     background-color:#FAFAFA;
     border-bottom:1px solid #eee;
-    border-top:1px solid #eee;
     position: absolute;
     width:100%;
-    padding:2% 0 2% 0;
-    z-index:10;
+    padding:3% 0 2% 0;
+    z-index:1;
     height:auto;
 }
 
@@ -113,8 +212,8 @@ body {
     min-width:94%;
     background-position: center;
     background-repeat: no-repeat;
-    background-size:12% auto;
-    padding:2% 3% 2% 3%;
+    background-size:1.8em auto;
+    padding:0 3% 2% 3%;
 }
 
 .fcDayTitle {
