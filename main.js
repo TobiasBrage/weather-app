@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function (event) {
 
+    console.log(document.getElementById("tempTitle").offsetHeight);
+
     let weatherLat = 55.6256460;
     let weatherLon = 12.0860530;
     let scrollTop = 0;
@@ -18,13 +20,13 @@ document.addEventListener('DOMContentLoaded', function (event) {
     let headerHourHeight= weatherHour.offsetHeight;
     let headerTempHeight = tempTitle.offsetHeight;
     let weatherInfoFade = 0, wInfofadeStop = headerInfoHeight, wInfoElement = $('#weatherInfo');
-    let tempTitleFade = 0, tempTitleStop = headerTempHeight, tempTitleElement = $('#tempTitle');
+    let tempTitleFade = 0, tempTitleStop = headerTempHeight+headerInfoHeight, tempTitleElement = $('#tempTitle');
     weatherInfo.style.marginTop += headerHeight;
     weatherHour.style.marginTop += headerHeight+headerInfoHeight;
     weatherForecast.style.marginTop = headerHeight+headerInfoHeight+headerHourHeight;
     weatherHeaderBG.style.height = headerHeight-headerTempHeight;
     $(window).on('scroll', function() {
-        scrollTop = $(this).scrollTop();
+        scrollTop = $(window).scrollTop();
         scrollEff = Math.round(scrollTop/headerInfoHeight*100);
         weatherInfoHeight = headerInfoHeight - scrollEff;
         weatherInfo.style.height = weatherInfoHeight;
@@ -61,9 +63,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
             {id: 701, translation: 'Tåge', icon: 'cloudy.svg'},
             {id: 310, translation: 'Støvregn', icon: 'rain.svg'},
             {id: 601, translation: 'Sne', icon: 'snow.png'},
-            {id: 600, translation: 'Let sne', icon: 'snow.png'},
+            {id: 600, translation: 'Let sne', icon: 'snow.svg'},
             {id: 804, translation: 'Skyet', icon: 'cloudy.svg'},
-            {id: 800, translation: 'Klar himmel', icon: 'sun.svg'},
+            {id: 800, translation: 'Klar himmel', icon: 'sky.svg', iconNight: 'skyNight.svg'},
             {id: 801, translation: 'Let skyet himmel', icon: 'cloudy.svg'},
             {id: 802, translation: 'Skyet', icon: 'cloudy.svg'},
             {id: 803, translation: 'Spredte skyer', icon: 'cloudy.svg'}
@@ -141,6 +143,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
                     },
                     hour: function() {
                         return dateTimeDigit(Curdate.getHours());
+                    },
+                    minute: function() {
+                        return dateTimeDigit(Curdate.getMinutes());
                     }
                 }
             }
@@ -182,23 +187,21 @@ document.addEventListener('DOMContentLoaded', function (event) {
             return response.json();
         })
         .then((json) => {
-            let todaySUDate = dateTimeDigit(weather.sunriseUnix().getHours());
-            let todaySUMinute = dateTimeDigit(weather.sunriseUnix().getMinutes());
-            let todaySUDT = todaySUDate+todaySUMinute;
-            let todaySDDate = dateTimeDigit(weather.sunsetUnix().getHours());
-            let todaySDMinute = dateTimeDigit(weather.sunsetUnix().getMinutes());
-            let todaySDDT = todaySDDate+todaySDMinute;
-            let sunsetSet = 0;
-            let sunriseSet = 0;
             let fcConId = 0;
             let fcDate = 0;
             let fcTemp = 0;
             let fcHour = 0;
             let fcDay = 0;
             let fcMinute = 0;
-            let fcDT = 0;
             let fcIcon = '';
-            json.list.forEach(function(element, i) {
+            let weatherCounter = 0;
+            let weatherNow = 0;
+            let forecastAhead = 10;
+            let SDDT = 1815;
+            let SUDT = dateTimeDigit(weather.sunriseUnix().getHours())+dateTimeDigit(weather.sunriseUnix().getMinutes());
+            let fcDT = 0;
+            let dayNight = 0;
+            json.list.forEach(function(element, elementId) {
                 fcConId = element.weather[0].id;
                 fcDate = new Date(1000*element.dt);
                 fcTemp = Math.round(element.main.temp);
@@ -206,24 +209,21 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 fcDay = fcDate.getDate();
                 fcMinute = dateTimeDigit(fcDate.getMinutes());
                 fcDT = fcHour+fcMinute;
-                if(weather.date.day() == fcDay) {
+                dayNight = 0;
+                weatherCounter++;
+                if(element.sys.pod == 'n') {
+                    if(weatherConData(fcConId).iconNight != null) fcIcon = weatherConData(fcConId).iconNight;
+                } else {
                     fcIcon = weatherConData(fcConId).icon;
-                    console.log(fcIcon);
-                    if(todaySUDT < fcDT && sunriseSet == 0) {
-                        document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItemSU"><h2 class="weatherHourTitle">${weather.sunrise()}</h2><h2 class="weatherHourTime" id="weatherHourTime${i}">Sol op</h2></li>`;
-                        document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItemNow"><h2 class="weatherHourTitle">Nu</h2><h2 class="weatherHourTime" id="weatherHourTime${i}">${weather.temperature.current()}°</h2></li>`;
-                        sunriseSet = 1;
-                    } else if(todaySUDT > fcDT && sunriseSet == 0) {
-                        document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItemNow"><h2 class="weatherHourTitle">Nu</h2><h2 class="weatherHourTime" id="weatherHourTime${i}">${weather.temperature.current()}°</h2></li>`;
-                        document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItemSU"><h2 class="weatherHourTitle">${weather.sunrise()}</h2><h2 class="weatherHourTime" id="weatherHourTime${i}">Sol op</h2></li>`;
-                        sunriseSet = 1;
-                    } else if(todaySDDT < fcDT && sunsetSet == 0) {
-                        document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItemSD"><h2 class="weatherHourTitle">${weather.sunset()}</h2><h2 class="weatherHourTime" id="weatherHourTimeNow${i}">Sol ned</h2></li>`;
-                        sunsetSet = 1;
-                    }
-                    document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItem${i}"><h2 class="weatherHourTitle">${fcHour}</h2><h2 class="weatherHourTime" id="weatherHourTime${i}">${fcTemp}°</h2></li>`;
-                    document.getElementById("weatherHourItem"+i).style.backgroundImage = `url(icons/${fcIcon})`;
+                }
+                if(weatherNow == 0) {
+                    document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItemNow"><h2 class="weatherHourTitle">Nu</h2><h2 class="weatherHourTime" id="weatherHourTime${elementId}">${weather.temperature.current()}°</h2></li>`;
                     document.getElementById("weatherHourItemNow").style.backgroundImage = `url(icons/${weather.icon()})`;
+                    weatherNow++;
+                }
+                if(weatherCounter < forecastAhead) {
+                    document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItem${elementId}"><h2 class="weatherHourTitle">${fcHour}</h2><h2 class="weatherHourTime" id="weatherHourTime${elementId}">${fcTemp}°</h2></li>`;
+                    document.getElementById("weatherHourItem"+elementId).style.backgroundImage = `url(icons/${fcIcon})`;
                 }
             });
         })
@@ -244,8 +244,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         function curWeekDay(wDay) {
             wDay = wDay.toString();
-            if (wDay==1) return weekDayName[0];
-            if (wDay==2) return weekDayName[1];
+            if(wDay==1) return weekDayName[0];
+            if(wDay==2) return weekDayName[1];
             if(wDay==3) return weekDayName[2];
             if(wDay==4) return weekDayName[3];
             if(wDay==5) return weekDayName[4];
