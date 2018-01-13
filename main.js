@@ -1,56 +1,7 @@
 document.addEventListener('DOMContentLoaded', function (event) {
 
-    console.log(document.getElementById("tempTitle").offsetHeight);
-
     let weatherLat = 55.6256460;
     let weatherLon = 12.0860530;
-    let scrollTop = 0;
-    let scrollEff = 0;
-    let weatherInfoHeight = 0;
-    let wInfoOffset;
-    let tempOffset;
-    let weatherHeader = document.getElementById("weatherHeader");
-    let weatherForecast = document.getElementById("weatherForecast");
-    let weatherHeaderBG = document.getElementById("weatherHeaderBG");
-    let weatherHour = document.getElementById("weatherHour");
-    let weatherInfo = document.getElementById("weatherInfo");
-    let tempTitle = document.getElementById("tempTitle");
-    let headerHeight= weatherHeader.offsetHeight;
-    let headerInfoHeight= weatherInfo.offsetHeight;
-    let headerHourHeight= weatherHour.offsetHeight;
-    let headerTempHeight = tempTitle.offsetHeight;
-    let weatherInfoFade = 0, wInfofadeStop = headerInfoHeight, wInfoElement = $('#weatherInfo');
-    let tempTitleFade = 0, tempTitleStop = headerTempHeight+headerInfoHeight, tempTitleElement = $('#tempTitle');
-    weatherInfo.style.marginTop += headerHeight;
-    weatherHour.style.marginTop += headerHeight+headerInfoHeight;
-    weatherForecast.style.marginTop = headerHeight+headerInfoHeight+headerHourHeight;
-    weatherHeaderBG.style.height = headerHeight-headerTempHeight;
-    $(window).on('scroll', function() {
-        scrollTop = $(window).scrollTop();
-        scrollEff = Math.round(scrollTop/headerInfoHeight*100);
-        weatherInfoHeight = headerInfoHeight - scrollEff;
-        weatherInfo.style.height = weatherInfoHeight;
-        weatherHour.style.marginTop = headerHeight+headerInfoHeight-scrollEff;
-        wInfoOffset = $(document).scrollTop(), wInfoOpacity = 0;
-        tempOffset = $(document).scrollTop(), tempOpacity = 0;
-        if(wInfoOffset <= weatherInfoFade){
-            wInfoOpacity = 1;
-        } else if(wInfoOffset <= wInfofadeStop) {
-            wInfoOpacity = 1-wInfoOffset/wInfofadeStop;
-        }
-        if(tempOffset <= tempTitleFade){
-            tempOpacity = 1;
-        } else if(tempOffset <= tempTitleStop) {
-            tempOpacity = 1-tempOffset/tempTitleStop;
-        }
-        wInfoElement.css('opacity', wInfoOpacity);
-        tempTitleElement.css('opacity', tempOpacity);
-        if(scrollTop >= headerInfoHeight+headerTempHeight) {
-            $('#weatherHour').css({"position":"fixed","top":"0", "margin":headerHeight-headerTempHeight+"px 0 0 0"});
-        } else if(scrollTop <= headerInfoHeight+headerTempHeight) {
-            $('#weatherHour').css({"position":"absolute", "margin":headerHeight+headerInfoHeight+"px 0 0 0"});
-        }
-    });
 
     fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${weatherLat}&lon=${weatherLon}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
     .then((response) => {
@@ -180,6 +131,23 @@ document.addEventListener('DOMContentLoaded', function (event) {
                     }
                 }
             });
+            document.getElementById("weatherForecast").innerHTML += `<li id="weatherDescription">I dag ${weather.descriptionTranslated().toLowerCase()} og ${weather.temperature.current()}°. Højeste temperatur vil være ${weather.temperature.max()}° og laveste temperatur ${weather.temperature.min()}°.</li>`;
+            document.getElementById("weatherForecast").innerHTML += `<li id="weatherDetails">
+            <ul class="wDetailContainer">
+                <li class="wDetailItem">
+                    <p class="wDetailTitle">Sol op</p><p class="wDetailInfo">${weather.sunrise()}</p>
+                </li>
+                <li class="wDetailItem">
+                    <p class="wDetailTitle">Sol ned</p><p class="wDetailInfo">${weather.sunset()}</p>
+                </li>
+                <li class="wDetailItem">
+                    <p class="wDetailTitle">Vindstyrke</p><p class="wDetailInfo">${weather.wind.direction()} ${weather.wind.speed()} m/s</p>
+                </li>
+                <li class="wDetailItem">
+                    <p class="wDetailTitle">Luftfugtighed</p><p class="wDetailInfo">${weather.humidity()}%</p>
+                </li>
+            </ul>
+            </li>`;
         })
 
         fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${weatherLat}&lon=${weatherLon}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
@@ -254,5 +222,55 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
 
     })
+
+    let scrollTop = 0;
+    let scrollEff = 0;
+    let weatherInfoHeight = 0;
+    let wInfoOffset;
+    let tempOffset;
+    let weatherHeader = document.getElementById("weatherHeader");
+    let weatherForecast = document.getElementById("weatherForecast");
+    let weatherHeaderBG = document.getElementById("weatherHeaderBG");
+    let weatherHour = document.getElementById("weatherHour");
+    let weatherInfo = document.getElementById("weatherInfo");
+    let tempTitle = document.getElementById("tempTitle");
+    let headerHeight= weatherHeader.offsetHeight;
+    let headerInfoHeight= weatherInfo.offsetHeight;
+    let headerHourHeight= weatherHour.offsetHeight;
+    let headerTempHeight = tempTitle.offsetHeight;
+    let weatherForecastheight = weatherForecast.offsetHeight;
+    let weatherInfoFade = 0, wInfofadeStop = headerInfoHeight, wInfoElement = $('#weatherInfo');
+    let tempTitleFade = 0, tempTitleStop = headerTempHeight+headerInfoHeight, tempTitleElement = $('#tempTitle');
+    $(window).on('scroll', function() {
+        scrollTop = $(window).scrollTop();
+        scrollEff = Math.round(scrollTop/headerInfoHeight*100);
+        weatherInfoHeight = headerInfoHeight - scrollEff;
+        weatherInfo.style.height = weatherInfoHeight;
+        weatherHour.style.marginTop = headerHeight+headerInfoHeight-scrollEff;
+        wInfoOffset = $(document).scrollTop(), wInfoOpacity = 0;
+        tempOffset = $(document).scrollTop(), tempOpacity = 0;
+        if(wInfoOffset <= weatherInfoFade){
+            wInfoOpacity = 1;
+        } else if(wInfoOffset <= wInfofadeStop) {
+            wInfoOpacity = 1-wInfoOffset/wInfofadeStop;
+        }
+        if(tempOffset <= tempTitleFade){
+            tempOpacity = 1;
+        } else if(tempOffset <= tempTitleStop) {
+            tempOpacity = 1-tempOffset/tempTitleStop;
+        }
+        wInfoElement.css('opacity', wInfoOpacity);
+        tempTitleElement.css('opacity', tempOpacity);
+        if(scrollTop >= headerInfoHeight+headerTempHeight) {
+            $('#weatherHour').css({"position":"fixed","top":"0", "margin":headerHeight-headerTempHeight+"px 0 0 0"});
+        } else if(scrollTop <= headerInfoHeight+headerTempHeight) {
+            $('#weatherHour').css({"position":"absolute", "margin":headerHeight+headerInfoHeight+"px 0 0 0"});
+        }
+    });
+
+    weatherInfo.style.marginTop += headerHeight;
+    weatherHour.style.marginTop += headerHeight+headerInfoHeight;
+    weatherForecast.style.marginTop = headerHeight+headerInfoHeight+headerHourHeight;
+    weatherHeaderBG.style.height = headerHeight-headerTempHeight;
 
 });
