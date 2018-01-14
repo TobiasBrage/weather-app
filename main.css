@@ -218,11 +218,11 @@ body {
     float:left;
 }
 
-.wDetailItem:nth-child(3) {
+.wDetailItem:nth-child(5) {
     border-bottom:0;
 }
 
-.wDetailItem:nth-child(4) {
+.wDetailItem:nth-child(6) {
     border-bottom:0;
 }
 
