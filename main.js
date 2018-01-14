@@ -1,27 +1,82 @@
 document.addEventListener('DOMContentLoaded', function (event) {
 
-    let weatherLat = 55.6256460;
-    let weatherLon = 12.0860530;
+    let posLat = 55.41001576413402;
+    let posLon = 11.347551014304575;
 
-    fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${weatherLat}&lon=${weatherLon}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
+    fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${posLat}&lon=${posLon}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
     .then((response) => {
         return response.json();
     })
     .then((json) => {
         let wDescConTrans = [
-            {id: 500, translation: 'Let regn', icon: 'rain.svg'},
-            {id: 520, translation: 'Støvregn', icon: 'rain.svg'},
-            {id: 701, translation: 'Tåge', icon: 'cloudy.svg'},
-            {id: 310, translation: 'Støvregn', icon: 'rain.svg'},
-            {id: 601, translation: 'Sne', icon: 'snow.png'},
-            {id: 600, translation: 'Let sne', icon: 'snow.svg'},
-            {id: 804, translation: 'Skyet', icon: 'cloudy.svg'},
+            {id: 200, translation: 'Tordenvejr med regn', icon: 'thunderRain.svg', iconNight: 'thunderNight.svg'},
+            {id: 201, translation: 'Tordenvejr med regn', icon: 'thunderRain.svg', iconNight: 'thunderNight.svg'},
+            {id: 202, translation: 'Tordenvejr med regn', icon: 'thunderRain.svg', iconNight: 'thunderNight.svg'},
+            {id: 210, translation: 'Let Tordenvejr', icon: 'thunder.svg', iconNight: 'thunderNight.svg'},
+            {id: 211, translation: 'Tordenvejr', icon: 'thunder.svg', iconNight: 'thunderNight.svg'},
+            {id: 212, translation: 'Voldsomt tordenvejr', icon: 'thunder.svg', iconNight: 'thunderNight.svg'},
+            {id: 221, translation: 'Tordenvejr', icon: 'thunder.svg', iconNight: 'thunderNight.svg'},
+            {id: 230, translation: 'Tordenvejr med regn', icon: 'thunderRain.svg', iconNight: 'thunderNight.svg'},
+            {id: 231, translation: 'Tordenvejr med regn', icon: 'thunderRain.svg', iconNight: 'thunderNight.svg'},
+            {id: 232, translation: 'Tordenvejr med regn', icon: 'thunderRain.svg', iconNight: 'thunderNight.svg'},
+            {id: 300, translation: 'Let regn', icon: 'drizzle.svg', iconNight: 'drizzleNight.svg'},
+            {id: 301, translation: 'Støvregn', icon: 'drizzle.svg', iconNight: 'drizzleNight.svg'},
+            {id: 302, translation: 'Regn', icon: 'rain.svg', iconNight: 'rainNight.svg'},
+            {id: 310, translation: 'Regn', icon: 'rain.svg', iconNight: 'rainNight.svg'},
+            {id: 311, translation: 'Støvregn', icon: 'drizzle.svg', iconNight: 'drizzleNight.svg'},
+            {id: 312, translation: 'Let regn', icon: 'drizzle.svg', iconNight: 'drizzleNight.svg'},
+            {id: 313, translation: 'Let regn', icon: 'drizzle.svg', iconNight: 'drizzleNight.svg'},
+            {id: 314, translation: 'Regn', icon: 'rain.svg', iconNight: 'rainNight.svg'},
+            {id: 321, translation: 'Let regn', icon: 'drizzle.svg', iconNight: 'drizzleNight.svg'},
+            {id: 500, translation: 'Let regn', icon: 'drizzle.svg', iconNight: 'drizzleNight.svg'},
+            {id: 501, translation: 'Regn', icon: 'rain.svg', iconNight: 'rainNight.svg'},
+            {id: 502, translation: 'Kraftig regn', icon: 'heavyRain.svg', iconNight: 'heavyRainNight.svg'},
+            {id: 503, translation: 'Kraftig regn', icon: 'heavyRain.svg', iconNight: 'heavyRainNight.svg'},
+            {id: 504, translation: 'Kraftig regn', icon: 'heavyRain.svg', iconNight: 'heavyRainNight.svg'},
+            {id: 511, translation: 'Kraftig regn', icon: 'heavyRain.svg', iconNight: 'heavyRainNight.svg'},
+            {id: 520, translation: 'Regn', icon: 'rain.svg', iconNight: 'rainNight.svg'},
+            {id: 521, translation: 'Regn', icon: 'rain.svg', iconNight: 'rainNight.svg'},
+            {id: 522, translation: 'Regn', icon: 'rain.svg', iconNight: 'rainNight.svg'},
+            {id: 531, translation: 'Regn', icon: 'rain.svg', iconNight: 'rainNight.svg'},
+            {id: 600, translation: 'Let sne', icon: 'snow.svg', iconNight: 'snowNight.svg'},
+            {id: 601, translation: 'Sne', icon: 'snow.svg', iconNight: 'snowNight.svg'},
+            {id: 602, translation: 'Kraftig sne', icon: 'snow.svg', iconNight: 'snowNight.svg'},
+            {id: 611, translation: 'Slud', icon: 'snow.svg', iconNight: 'snowNight.svg'},
+            {id: 612, translation: 'Slud', icon: 'snow.svg', iconNight: 'snowNight.svg'},
+            {id: 615, translation: 'Slud med regn', icon: 'snow.svg', iconNight: 'snowNight.svg'},
+            {id: 616, translation: 'Slud med regn', icon: 'snow.svg', iconNight: 'snowNight.svg'},
+            {id: 620, translation: 'Slud med regn', icon: 'snow.svg', iconNight: 'snowNight.svg'},
+            {id: 621, translation: 'Sne', icon: 'snow.svg', iconNight: 'snowNight.svg'},
+            {id: 622, translation: 'Sne', icon: 'snow.svg', iconNight: 'snowNight.svg'},
+            {id: 701, translation: 'Tåge', icon: 'mist.svg', iconNight: 'mistNight.svg'},
+            {id: 711, translation: 'Røg', icon: 'mist.svg', iconNight: 'mistNight.svg'},
+            {id: 721, translation: 'Tåge', icon: 'mist.svg', iconNight: 'mistNight.svg'},
+            {id: 731, translation: 'Blæst med sand', icon: 'mist.svg', iconNight: 'mistNight.svg'},
+            {id: 741, translation: 'Tåge', icon: 'mist.svg', iconNight: 'mistNight.svg'},
+            {id: 751, translation: 'Sand', icon: 'mist.svg', iconNight: 'mistNight.svg'},
+            {id: 761, translation: 'Støv', icon: 'mist.svg', iconNight: 'mistNight.svg'},
+            {id: 771, translation: 'Byger', icon: 'mist.svg', iconNight: 'mistNight.svg'},
             {id: 800, translation: 'Klar himmel', icon: 'sky.svg', iconNight: 'skyNight.svg'},
-            {id: 801, translation: 'Let skyet himmel', icon: 'cloudy.svg'},
-            {id: 802, translation: 'Skyet', icon: 'cloudy.svg'},
-            {id: 803, translation: 'Spredte skyer', icon: 'cloudy.svg'}
+            {id: 801, translation: 'Let skyet himmel', icon: 'cloudy.svg', iconNight: 'cloudyNight.svg'},
+            {id: 802, translation: 'Skyet', icon: 'cloudy.svg', iconNight: 'cloudyNight.svg'},
+            {id: 803, translation: 'Spredte skyer', icon: 'cloudy.svg', iconNight: 'cloudyNight.svg'},
+            {id: 804, translation: 'Skyet', icon: 'cloudy.svg', iconNight: 'cloudyNight.svg'},
+            {id: 902, translation: 'Orkan', icon: 'heavyWind.svg', iconNight: 'heavyWindNight.svg'},
+            {id: 905, translation: 'Blæst', icon: 'wind.svg', iconNight: 'windNight.svg'},
+            {id: 951, translation: 'Brise', icon: 'wind.svg', iconNight: 'windNight.svg'},
+            {id: 952, translation: 'Brise', icon: 'wind.svg', iconNight: 'windNight.svg'},
+            {id: 953, translation: 'Let blæsevejr', icon: 'wind.svg', iconNight: 'windNight.svg'},
+            {id: 954, translation: 'Blæst', icon: 'wind.svg', iconNight: 'windNight.svg'},
+            {id: 955, translation: 'Blæst', icon: 'wind.svg', iconNight: 'windNight.svg'},
+            {id: 956, translation: 'Blæst', icon: 'wind.svg', iconNight: 'windNight.svg'},
+            {id: 957, translation: 'Blæst', icon: 'wind.svg', iconNight: 'windNight.svg'},
+            {id: 958, translation: 'Blæst', icon: 'wind.svg', iconNight: 'windNight.svg'},
+            {id: 959, translation: 'Storm', icon: 'heavyWind.svg', iconNight: 'heavyWindNight.svg'},
+            {id: 960, translation: 'Storm', icon: 'heavyWind.svg', iconNight: 'heavyWindNight.svg'},
+            {id: 961, translation: 'Storm', icon: 'heavyWind.svg', iconNight: 'heavyWindNight.svg'},
+            {id: 962, translation: 'Orkan', icon: 'heavyWind.svg', iconNight: 'heavyWindNight.svg'}
         ]; 
-        let wWindDir = ['N','NV','V','SV','S','SØ','E','NØ'];
+        let wWindDir = ['n','nv','v','sv','s','sø','e','nø'];
         let weekDayName = ['mandag','tirsdag','onsdag','torsdag','fredag','lørdag','søndag'];
         let Curdate = new Date(); 
         let weatherData = function () {
@@ -45,14 +100,14 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 },
                 sunrise: function() {
                     let wSunUUnix = new Date(1000*json.sys.sunrise);
-                    return dateTimeDigit(wSunUUnix.getHours())+':'+dateTimeDigit(wSunUUnix.getMinutes());
+                    return dateTimeDigit(wSunUUnix.getHours())+'.'+dateTimeDigit(wSunUUnix.getMinutes());
                 },
                 sunriseUnix: function() {
                     return new Date(1000*json.sys.sunrise);
                 },
                 sunset: function() {
                     let wSunDUnix = new Date(1000*json.sys.sunset);
-                    return dateTimeDigit(wSunDUnix.getHours())+':'+dateTimeDigit(wSunDUnix.getMinutes());
+                    return dateTimeDigit(wSunDUnix.getHours())+'.'+dateTimeDigit(wSunDUnix.getMinutes());
                 },
                 sunsetUnix: function() {
                     return new Date(1000*json.sys.sunset);
@@ -67,6 +122,10 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 icon: function() {
                     let wConTransIcon = weatherConData(weather.description()).icon;
                     return wConTransIcon;
+                },
+                iconId: function() {
+                    let wConTransIconId = weatherConData(weather.description()).id;
+                    return wConTransIconId;
                 },
                 wind: {
                     speed: function () {
@@ -104,6 +163,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         let weather = weatherData();
 
+        // today weather data
         document.getElementById("descriptionTitle").innerHTML = weather.descriptionTranslated();
         document.getElementById("tempTitle").innerHTML = weather.temperature.current()+'°';
         document.getElementById("cityTitle").innerHTML = weather.location();
@@ -111,11 +171,13 @@ document.addEventListener('DOMContentLoaded', function (event) {
         document.getElementById("tempMinTitle").innerHTML = weather.temperature.min();
         document.getElementById("tempMaxTitle").innerHTML = weather.temperature.max();
 
-        fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${weatherLat}&lon=${weatherLon}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
+        // 5 day forecast
+        fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${posLat}&lon=${posLon}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
         .then((response) => {
             return response.json();
         })
         .then((json) => {
+            let forecastDescription = '';
             json.list.forEach(function(element, i) {
                 let fcDate = new Date(1000*element.dt);
                 let fcConId = element.weather[0].id;
@@ -131,69 +193,67 @@ document.addEventListener('DOMContentLoaded', function (event) {
                     }
                 }
             });
-            document.getElementById("weatherForecast").innerHTML += `<li id="weatherDescription">I dag ${weather.descriptionTranslated().toLowerCase()} og ${weather.temperature.current()}°. Højeste temperatur vil være ${weather.temperature.max()}° og laveste temperatur ${weather.temperature.min()}°.</li>`;
-            document.getElementById("weatherForecast").innerHTML += `<li id="weatherDetails">
-            <ul class="wDetailContainer">
-                <li class="wDetailItem">
-                    <p class="wDetailTitle">Sol op</p><p class="wDetailInfo">${weather.sunrise()}</p>
-                </li>
-                <li class="wDetailItem">
-                    <p class="wDetailTitle">Sol ned</p><p class="wDetailInfo">${weather.sunset()}</p>
-                </li>
-                <li class="wDetailItem">
-                    <p class="wDetailTitle">Vindstyrke</p><p class="wDetailInfo">${weather.wind.direction()} ${weather.wind.speed()} m/s</p>
-                </li>
-                <li class="wDetailItem">
-                    <p class="wDetailTitle">Luftfugtighed</p><p class="wDetailInfo">${weather.humidity()}%</p>
-                </li>
-            </ul>
-            </li>`;
-        })
+            forecastDescription = `I dag ${weather.descriptionTranslated().toLowerCase()} og ${weather.temperature.current()}°. `;
+            if(weather.temperature.min() == weather.temperature.max()) {
+                forecastDescription +=  `Højeste og laveste temperatur vil være ${weather.temperature.max()}°.`;
+            } else {
+                forecastDescription +=  `Højeste temperatur vil være ${weather.temperature.max()}° og laveste temperatur ${weather.temperature.min()}°.`;
+            }
+            document.getElementById("weatherForecast").innerHTML += `<li id="weatherDescription">${forecastDescription}</li>`;
+            document.getElementById("weatherForecast").innerHTML += `<li id="weatherDetails"><ul class="wDetailContainer"><li class="wDetailItem"><p class="wDetailTitle">Sol op</p><p class="wDetailInfo">${weather.sunrise()}</p></li><li class="wDetailItem"><p class="wDetailTitle">Sol ned</p><p class="wDetailInfo">${weather.sunset()}</p></li><li class="wDetailItem"><p class="wDetailTitle">Vindstyrke</p><p class="wDetailInfo">${weather.wind.direction()} ${weather.wind.speed()} m/s</p></li><li class="wDetailItem"><p class="wDetailTitle">Luftfugtighed</p><p class="wDetailInfo">${weather.humidity()}%</p></li></ul></li><li id="footer">Data fra OpenWeatherMap</li>`;
 
-        fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${weatherLat}&lon=${weatherLon}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
-        .then((response) => {
-            return response.json();
-        })
-        .then((json) => {
-            let fcConId = 0;
-            let fcDate = 0;
-            let fcTemp = 0;
-            let fcHour = 0;
-            let fcDay = 0;
-            let fcMinute = 0;
-            let fcIcon = '';
-            let weatherCounter = 0;
-            let weatherNow = 0;
-            let forecastAhead = 10;
-            let SDDT = 1815;
-            let SUDT = dateTimeDigit(weather.sunriseUnix().getHours())+dateTimeDigit(weather.sunriseUnix().getMinutes());
-            let fcDT = 0;
-            let dayNight = 0;
-            json.list.forEach(function(element, elementId) {
-                fcConId = element.weather[0].id;
-                fcDate = new Date(1000*element.dt);
-                fcTemp = Math.round(element.main.temp);
-                fcHour = dateTimeDigit(fcDate.getHours());
-                fcDay = fcDate.getDate();
-                fcMinute = dateTimeDigit(fcDate.getMinutes());
-                fcDT = fcHour+fcMinute;
-                dayNight = 0;
-                weatherCounter++;
-                if(element.sys.pod == 'n') {
-                    if(weatherConData(fcConId).iconNight != null) fcIcon = weatherConData(fcConId).iconNight;
-                } else {
-                    fcIcon = weatherConData(fcConId).icon;
-                }
-                if(weatherNow == 0) {
-                    document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItemNow"><h2 class="weatherHourTitle">Nu</h2><h2 class="weatherHourTime" id="weatherHourTime${elementId}">${weather.temperature.current()}°</h2></li>`;
-                    document.getElementById("weatherHourItemNow").style.backgroundImage = `url(icons/${weather.icon()})`;
-                    weatherNow++;
-                }
-                if(weatherCounter < forecastAhead) {
-                    document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItem${elementId}"><h2 class="weatherHourTitle">${fcHour}</h2><h2 class="weatherHourTime" id="weatherHourTime${elementId}">${fcTemp}°</h2></li>`;
-                    document.getElementById("weatherHourItem"+elementId).style.backgroundImage = `url(icons/${fcIcon})`;
-                }
-            });
+            // hour forecast
+            fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${posLat}&lon=${posLon}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
+            .then((response) => {
+                return response.json();
+            })
+            .then((json) => {
+                let fcConId = 0;
+                let fcDate = 0;
+                let fcTemp = 0;
+                let fcHour = 0;
+                let fcDay = 0;
+                let fcMinute = 0;
+                let fcIcon = '';
+                let weatherCounter = 0;
+                let weatherNow = 0;
+                let forecastAhead = 10;
+                let SDDT = 1815;
+                let SUDT = dateTimeDigit(weather.sunriseUnix().getHours())+dateTimeDigit(weather.sunriseUnix().getMinutes());
+                let fcDT = 0;
+                let dayNight = 0;
+                json.list.forEach(function(element, elementId) {
+                    fcConId = element.weather[0].id;
+                    fcDate = new Date(1000*element.dt);
+                    fcTemp = Math.round(element.main.temp);
+                    fcHour = dateTimeDigit(fcDate.getHours());
+                    fcDay = fcDate.getDate();
+                    fcMinute = dateTimeDigit(fcDate.getMinutes());
+                    fcDT = fcHour+fcMinute;
+                    dayNight = 0;
+                    weatherCounter++;
+                    if(element.sys.pod == 'n') {
+                        if(weatherConData(fcConId).iconNight != null) fcIcon = weatherConData(fcConId).iconNight;
+                    } else {
+                        fcIcon = weatherConData(fcConId).icon;
+                    }
+                    if(weatherNow == 0) {
+                        let fcNowIcon = '';
+                        if(weatherConData(weather.iconId()).iconNight != null) {
+                            fcNowIcon = weatherConData(weather.iconId()).iconNight;
+                        } else {
+                            fcNowIcon = weatherConData(weather.iconId()).icon;
+                        }
+                        document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItemNow"><h2 class="weatherHourTitle">Nu</h2><h2 class="weatherHourTime" id="weatherHourTime${elementId}">${weather.temperature.current()}°</h2></li>`;
+                        document.getElementById("weatherHourItemNow").style.backgroundImage = `url(icons/${fcNowIcon})`;
+                        weatherNow++;
+                    }
+                    if(weatherCounter < forecastAhead) {
+                        document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItem${elementId}"><h2 class="weatherHourTitle">${fcHour}</h2><h2 class="weatherHourTime" id="weatherHourTime${elementId}">${fcTemp}°</h2></li>`;
+                        document.getElementById("weatherHourItem"+elementId).style.backgroundImage = `url(icons/${fcIcon})`;
+                    }
+                });
+            })
         })
 
         function weatherConData(wConId) {
@@ -272,5 +332,5 @@ document.addEventListener('DOMContentLoaded', function (event) {
     weatherHour.style.marginTop += headerHeight+headerInfoHeight;
     weatherForecast.style.marginTop = headerHeight+headerInfoHeight+headerHourHeight;
     weatherHeaderBG.style.height = headerHeight-headerTempHeight;
-
 });
+

@@ -27,7 +27,7 @@ body {
     margin:0 2% 0 2%;
     background-position: center;
     background-repeat: no-repeat;
-    background-size:1.8em auto;
+    background-size:2em auto;
     white-space: nowrap;
     display:inline-block;
     list-style:none;
@@ -87,7 +87,7 @@ body {
 
 #test {
     float:left;
-    height:1500px;
+    
     width:100%;
 }
 
@@ -231,6 +231,7 @@ body {
     float:left;
     padding:3% 0 3% 0;
     border-bottom:1px solid #eee;
+    list-style: none;
 }
 
 .wDetailTitle {
@@ -246,7 +247,7 @@ body {
     width:100%;
     float:left;
     font-weight: 300;
-    font-size:38px;
+    font-size:30px;
     color:#555;
     padding:0 0 0 0;
     line-height: 32px;
@@ -264,7 +265,7 @@ body {
     min-width:94%;
     background-position: center;
     background-repeat: no-repeat;
-    background-size:1.8em auto;
+    background-size:2em auto;
     padding:0 3% 0 3%;
     margin: 0 0 2% 0;
 }
@@ -276,7 +277,7 @@ body {
     font-weight: 300;
     font-size:20px;
     text-align: left;
-    margin:1% 0 1% 0;
+    margin:2% 0 2% 0;
 }
 
 .fcDayTemp {
@@ -286,4 +287,14 @@ body {
     font-weight: 300;
     font-size:20px;
     text-align: right;
+}
+
+#footer {
+    width:100%;
+    float:left;
+    color:#555;
+    font-weight: 300;
+    font-size:16px;
+    text-align: center;
+    padding:7% 0 7% 0;
 }
