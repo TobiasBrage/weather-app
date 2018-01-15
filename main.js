@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     let posLat = 55.641910;
     let posLon = 12.087845;
-
+    // https://api.apixu.com/v1/forecast.json?key=24d68d53490f4eb2aa7155049181201&q=55.641910,12.087845&days=6&hour=24
     fetch(`https://api.apixu.com/v1/forecast.json?key=24d68d53490f4eb2aa7155049181201&q=${posLat},${posLon}&days=6&hour=24`)
     .then((response) => {
         return response.json();
