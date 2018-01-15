@@ -1,17 +1,18 @@
 document.addEventListener('DOMContentLoaded', function (event) {
 
-    let posLat = 55.41001576413402;
-    let posLon = 11.347551014304575;
+    let posLat = 55.641910;
+    let posLon = 12.087845;
 
     fetch(`https://api.apixu.com/v1/forecast.json?key=24d68d53490f4eb2aa7155049181201&q=${posLat},${posLon}&days=6&hour=24`)
     .then((response) => {
         return response.json();
     })
     .then((json) => {
+        
         let Curdate = new Date();
-        let apixuTempUnix = 0;
-        let apixuTempRes = '';
-        let apixuTempDate = 0;
+        let apixuDataUnix = 0;
+        let apixuDataRes = '';
+        let apixuDataDate = 0;
         let weatherDataApixu = function () {
             return {
                 feelslike: function() {
@@ -20,43 +21,60 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 visibility: function() {
                     return json.current.vis_km;
                 },
-                avgTemperature: function(reqDay) {
+                precipitation: function() {
+                    let precipData = json.forecast.forecastday[0].day.totalprecip_mm/10;
+                    return precipData.toFixed(2);
+                },
+                sunrise: function(reqDay) { // fortsæt her
+                    let sunriseRaw = json.forecast.forecastday[0].astro.sunrise;
+                    let sunriseAMPM = sunriseRaw.split(' ')[1];
+                    let sunriseHour = sunriseRaw.split(':')[0].replace(0, '');
                     json.forecast.forecastday.forEach(function(element, elementId) {
-                        apixuTempUnix = new Date(1000*element.date_epoch);
-                        apixuTempDate = apixuTempUnix.getDate();
-                        if(reqDay == apixuTempDate) {
-                            apixuTempRes = Math.round(element.day.avgtemp_c);
+                        apixuDataUnix = new Date(1000*element.date_epoch);
+                        apixuDataDate = apixuDataUnix.getDate();
+                        if(reqDay == apixuDataDate) {
+                            apixuDataRes = Number(sunriseRaw)+12;
                         }
                     });
-                    return apixuTempRes;
+                    return Number(sunriseHour)+12;
+                },
+                avgTemperature: function(reqDay) {
+                    json.forecast.forecastday.forEach(function(element, elementId) {
+                        apixuDataUnix = new Date(1000*element.date_epoch);
+                        apixuDataDate = apixuDataUnix.getDate();
+                        if(reqDay == apixuDataDate) {
+                            apixuDataRes = Math.round(element.day.avgtemp_c);
+                        }
+                    });
+                    return apixuDataRes;
                 },
                 minTemperature: function(reqDay) {
                     json.forecast.forecastday.forEach(function(element, elementId) {
-                        apixuTempUnix = new Date(1000*element.date_epoch);
-                        apixuTempDate = apixuTempUnix.getDate();
-                        if(reqDay == apixuTempDate) {
-                            apixuTempRes = Math.round(element.day.mintemp_c);
+                        apixuDataUnix = new Date(1000*element.date_epoch);
+                        apixuDataDate = apixuDataUnix.getDate();
+                        if(reqDay == apixuDataDate) {
+                            apixuDataRes = Math.round(element.day.mintemp_c);
                         }
                     });
-                    return apixuTempRes;
+                    return apixuDataRes;
                 },
                 maxTemperature: function(reqDay) {
                     json.forecast.forecastday.forEach(function(element, elementId) {
-                        apixuTempUnix = new Date(1000*element.date_epoch);
-                        apixuTempDate = apixuTempUnix.getDate();
-                        if(reqDay == apixuTempDate) {
-                            apixuTempRes = Math.round(element.day.maxtemp_c);
-                            if(apixuTempRes == '-0') apixuTempRes = 0;
+                        apixuDataUnix = new Date(1000*element.date_epoch);
+                        apixuDataDate = apixuDataUnix.getDate();
+                        if(reqDay == apixuDataDate) {
+                            apixuDataRes = Math.round(element.day.maxtemp_c);
+                            if(apixuDataRes == '-0') apixuDataRes = 0;
                         }
                     });
-                    return apixuTempRes;
+                    return apixuDataRes;
                 }
             }
         }
 
         let weatherApixu = weatherDataApixu();
 
-        console.log(weatherApixu.maxTemperature(14));
+        console.log(weatherApixu.sunrise(16));
 
         fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${posLat}&lon=${posLon}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
         .then((response) => {
@@ -181,6 +199,10 @@ document.addEventListener('DOMContentLoaded', function (event) {
                         let wConTransIconId = weatherConData(weather.description()).id;
                         return wConTransIconId;
                     },
+                    pressure: function() {
+                        let wConTransPressure = json.main.pressure;
+                        return wConTransPressure;
+                    },
                     wind: {
                         speed: function () {
                             return json.wind.speed;
@@ -222,17 +244,30 @@ document.addEventListener('DOMContentLoaded', function (event) {
             document.getElementById("tempTitle").innerHTML = weather.temperature.current()+'°';
             document.getElementById("cityTitle").innerHTML = weather.location();
             document.getElementById("dayTitle").innerHTML = weather.date.weekday()+' i dag';
-            document.getElementById("tempMinTitle").innerHTML = weather.temperature.min();
-            document.getElementById("tempMaxTitle").innerHTML = weather.temperature.max();
+            document.getElementById("tempMinTitle").innerHTML = weatherApixu.minTemperature(weather.date.day());
+            document.getElementById("tempMaxTitle").innerHTML = weatherApixu.maxTemperature(weather.date.day());
 
-            // 5 day forecast
+            // forecast
             fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${posLat}&lon=${posLon}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
             .then((response) => {
                 return response.json();
             })
             .then((json) => {
-                let forecastDescription = '';
-                json.list.forEach(function(element, i) {
+                let fcConId = 0;
+                let fcDate = 0;
+                let fcTemp = 0;
+                let fcHour = 0;
+                let fcDay = 0;
+                let fcMinute = 0;
+                let fcIcon = '';
+                let weatherCounter = 0;
+                let weatherNow = 0;
+                let forecastAhead = 10;
+                let SDDT = 1815;
+                let SUDT = dateTimeDigit(weather.sunriseUnix().getHours())+dateTimeDigit(weather.sunriseUnix().getMinutes());
+                let fcDT = 0;
+                let dayNight = 0;
+                json.list.forEach(function(element, elementId) {
                     let fcDate = new Date(1000*element.dt);
                     let fcConId = element.weather[0].id;
                     let fcTemp = Math.round(element.main.temp);
@@ -242,75 +277,54 @@ document.addEventListener('DOMContentLoaded', function (event) {
                     if(weather.date.day() != fcDay) {
                         if(fcHour == 13) {
                             let fcIcon = weatherConData(fcConId).icon;
-                            document.getElementById("weatherForecast").innerHTML += `<li class="fcDayContainer" id="fcDayContainer${i}"><p class="fcDayTitle">${fcWeekDay}</p><p class="fcDayTemp">${fcTemp}</p></li>`;
-                            document.getElementById("fcDayContainer"+i).style.backgroundImage = `url(icons/${fcIcon})`;
+                            document.getElementById("weatherForecast").innerHTML += `<li class="fcDayContainer" id="fcDayContainer${elementId}"><p class="fcDayTitle">${fcWeekDay}</p><p class="fcDayTempMin">${weatherApixu.minTemperature(fcDay)}</p><p class="fcDayTemp">${weatherApixu.avgTemperature(fcDay)}</p></li>`;
+                            document.getElementById("fcDayContainer"+elementId).style.backgroundImage = `url(icons/${fcIcon})`;
                         }
+                    }
+                    fcConId = element.weather[0].id;
+                    fcDate = new Date(1000*element.dt);
+                    fcTemp = Math.round(element.main.temp);
+                    fcHour = dateTimeDigit(fcDate.getHours());
+                    fcDay = fcDate.getDate();
+                    fcMinute = dateTimeDigit(fcDate.getMinutes());
+                    fcDT = fcHour+fcMinute;
+                    dayNight = 0;
+                    weatherCounter++;
+                    if(element.sys.pod == 'n') {
+                        if(weatherConData(fcConId).iconNight != null) fcIcon = weatherConData(fcConId).iconNight;
+                    } else {
+                        fcIcon = weatherConData(fcConId).icon;
+                    }
+                    if(weatherNow == 0) {
+                        let fcNowIcon = '';
+                        if(weatherConData(weather.iconId()).iconNight != null) {
+                            fcNowIcon = weatherConData(weather.iconId()).iconNight;
+                        } else {
+                            fcNowIcon = weatherConData(weather.iconId()).icon;
+                        }
+                        document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItemNow"><h2 class="weatherHourTitle">Nu</h2><h2 class="weatherHourTime" id="weatherHourTime${elementId}">${weather.temperature.current()}°</h2></li>`;
+                        document.getElementById("weatherHourItemNow").style.backgroundImage = `url(icons/${fcNowIcon})`;
+                        weatherNow++;
+                    }
+                    if(weatherCounter < forecastAhead) {
+                        document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItem${elementId}"><h2 class="weatherHourTitle">${fcHour}</h2><h2 class="weatherHourTime" id="weatherHourTime${elementId}">${fcTemp}°</h2></li>`;
+                        document.getElementById("weatherHourItem"+elementId).style.backgroundImage = `url(icons/${fcIcon})`;
                     }
                 });
                 forecastDescription = `I dag ${weather.descriptionTranslated().toLowerCase()} og ${weather.temperature.current()}°. `;
-                if(weather.temperature.min() == weather.temperature.max()) {
-                    forecastDescription +=  `Højeste og laveste temperatur vil være ${weather.temperature.max()}°.`;
+                if(weatherApixu.minTemperature(weather.date.day()) == weatherApixu.maxTemperature(weather.date.day())) {
+                    forecastDescription +=  `Højeste og laveste temperatur vil være ${weatherApixu.maxTemperature(weather.date.day())}°.`;
                 } else {
-                    forecastDescription +=  `Højeste temperatur vil være ${weather.temperature.max()}° og laveste temperatur ${weather.temperature.min()}°.`;
+                    forecastDescription +=  `Højeste temperatur vil være ${weatherApixu.maxTemperature(weather.date.day())}° og laveste temperatur ${weatherApixu.minTemperature(weather.date.day())}°.`;
                 }
                 document.getElementById("weatherForecast").innerHTML += `<li id="weatherDescription">${forecastDescription}</li>`;
                 document.getElementById("weatherForecast").innerHTML += `<li id="weatherDetails"><ul class="wDetailContainer"><li class="wDetailItem"><p class="wDetailTitle">Sol op</p><p class="wDetailInfo">${weather.sunrise()}</p></li><li class="wDetailItem"><p class="wDetailTitle">Sol ned</p><p class="wDetailInfo">${weather.sunset()}</p></li><li class="wDetailItem"><p class="wDetailTitle">Vindstyrke</p><p class="wDetailInfo">${weather.wind.direction()} ${weather.wind.speed()} m/s</p></li><li class="wDetailItem"><p class="wDetailTitle">Luftfugtighed</p><p class="wDetailInfo">${weather.humidity()}%</p></li>
                 <li class="wDetailItem"><p class="wDetailTitle">Føles som</p><p class="wDetailInfo">${weatherApixu.feelslike()}°</p></li>
                 <li class="wDetailItem"><p class="wDetailTitle">Sigtbarhed</p><p class="wDetailInfo">${weatherApixu.visibility()} km</p></li>
+                <li class="wDetailItem"><p class="wDetailTitle">Nedbør</p><p class="wDetailInfo">${weatherApixu.precipitation()} cm</p></li>
+                <li class="wDetailItem"><p class="wDetailTitle">Lufttryk</p><p class="wDetailInfo">${weather.pressure()} hPa</p></li>
                 </ul></li><li id="footer">Data fra OpenWeatherMap og Apixu</li>`;
-
-                // hour forecast
-                fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${posLat}&lon=${posLon}&units=metric&appid=4db57a3839044b1c32184aa9a00d6007`)
-                .then((response) => {
-                    return response.json();
-                })
-                .then((json) => {
-                    let fcConId = 0;
-                    let fcDate = 0;
-                    let fcTemp = 0;
-                    let fcHour = 0;
-                    let fcDay = 0;
-                    let fcMinute = 0;
-                    let fcIcon = '';
-                    let weatherCounter = 0;
-                    let weatherNow = 0;
-                    let forecastAhead = 10;
-                    let SDDT = 1815;
-                    let SUDT = dateTimeDigit(weather.sunriseUnix().getHours())+dateTimeDigit(weather.sunriseUnix().getMinutes());
-                    let fcDT = 0;
-                    let dayNight = 0;
-                    json.list.forEach(function(element, elementId) {
-                        fcConId = element.weather[0].id;
-                        fcDate = new Date(1000*element.dt);
-                        fcTemp = Math.round(element.main.temp);
-                        fcHour = dateTimeDigit(fcDate.getHours());
-                        fcDay = fcDate.getDate();
-                        fcMinute = dateTimeDigit(fcDate.getMinutes());
-                        fcDT = fcHour+fcMinute;
-                        dayNight = 0;
-                        weatherCounter++;
-                        if(element.sys.pod == 'n') {
-                            if(weatherConData(fcConId).iconNight != null) fcIcon = weatherConData(fcConId).iconNight;
-                        } else {
-                            fcIcon = weatherConData(fcConId).icon;
-                        }
-                        if(weatherNow == 0) {
-                            let fcNowIcon = '';
-                            if(weatherConData(weather.iconId()).iconNight != null) {
-                                fcNowIcon = weatherConData(weather.iconId()).iconNight;
-                            } else {
-                                fcNowIcon = weatherConData(weather.iconId()).icon;
-                            }
-                            document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItemNow"><h2 class="weatherHourTitle">Nu</h2><h2 class="weatherHourTime" id="weatherHourTime${elementId}">${weather.temperature.current()}°</h2></li>`;
-                            document.getElementById("weatherHourItemNow").style.backgroundImage = `url(icons/${fcNowIcon})`;
-                            weatherNow++;
-                        }
-                        if(weatherCounter < forecastAhead) {
-                            document.getElementById("weatherHourList").innerHTML += `<li class="weatherHourItem" id="weatherHourItem${elementId}"><h2 class="weatherHourTitle">${fcHour}</h2><h2 class="weatherHourTime" id="weatherHourTime${elementId}">${fcTemp}°</h2></li>`;
-                            document.getElementById("weatherHourItem"+elementId).style.backgroundImage = `url(icons/${fcIcon})`;
-                        }
-                    });
-                })
+                $('#hoverWindow').fadeOut();
             })
 
             function weatherConData(wConId) {
